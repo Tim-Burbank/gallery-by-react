@@ -64,28 +64,31 @@ var ImgFigure = React.createClass ({
     )
   }
 });
-//获取区间内的随机值
 
 
-/*var ImgFigure = React.createClass({
-  render:function(){
-
-    var styleObj = {};
-    if(this.props.arrange.pos) {
-      styleObj = this.props.arrange.pos
+var ControllerUnit = React.createClass({
+  handleClick(e){
+  if(this.props.arrange.isCenter){
+    this.props.inverse()
+  }else{
+    this.props.center()
+  }
+    e.preventDefault();
+    e.stopPropagation();
+  },
+  render(){
+    let controllerUnitClassName = 'controller-unit';
+    if(this.props.arrange.isCenter){
+      controllerUnitClassName += ' is-center';
+      if(this.props.arrange.isInverse){
+        controllerUnitClassName += ' is-inverse';
+      }
     }
-    return(
-      <figure className="img-figure" style={styleObj}>
-        <img src={this.props.data.imageURL}
-              alt={this.props.data.title}
-        />
-        <figcaption>
-          <h2 className="img-title">{this.props.data.title}</h2>
-        </figcaption>
-      </figure>
+    return (
+      <span className={controllerUnitClassName} onClick={this.handleClick}></span>
     )
   }
-});*/
+});
 
 export default class AppComponent extends React.Component {
   constructor(props) {
@@ -209,8 +212,8 @@ export default class AppComponent extends React.Component {
 
   componentDidMount(){
     const stageDOM = ReactDOM.findDOMNode(this.refs.stage),
-      stageW = stageDOM.clientWidth,
-      stageH = stageDOM.clientHeight,
+      stageW = stageDOM.scrollWidth,
+      stageH = stageDOM.scrollHeight,
       halfStageW = Math.floor(stageW/2),
       halfStageH = Math.floor(stageH/2);
     const imgFigureDOM = ReactDOM.findDOMNode(this.refs.imgFigure0),
@@ -253,6 +256,8 @@ export default class AppComponent extends React.Component {
         };
       }
       imgFigures.push(<ImgFigure key={index} data={value} ref={'imgFigure'+index} arrange = {this.state.imgsArrangeArr[index]} inverse = {this.inverse(index)} center = {this.center(index)}/>)
+
+      controllerUnits.push(<ControllerUnit key={index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>)
     }.bind(this));
     return (
       <section className="stage" ref="stage">
